@@ -1,7 +1,5 @@
 package com.minkatec.Diary.dtos;
 
-
-
 public class UserDto {
     String username;
     String password;

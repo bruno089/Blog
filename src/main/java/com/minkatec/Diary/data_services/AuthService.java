@@ -5,6 +5,7 @@ import com.minkatec.Diary.dtos.UserDto;
 import com.minkatec.Diary.entities.Role;
 import com.minkatec.Diary.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
@@ -14,10 +15,12 @@ public class AuthService {
     private UserDao userDao;
 
 
+
     public void signup(UserDto userDto) {
         User user = new User();
-        user.setUserName(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
+        user.setUsername(userDto.getUsername());
+        //user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setActive(true);
         user.setRegistrationDate( LocalDateTime.now());
