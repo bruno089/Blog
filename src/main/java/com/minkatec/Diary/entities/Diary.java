@@ -5,8 +5,9 @@ import java.util.List;
 
 @Entity
 public class Diary {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+    @Column(length = 100)
     String title;
     LocalDateTime registrationDate;
     @OneToMany

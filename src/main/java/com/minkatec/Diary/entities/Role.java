@@ -1,7 +1,8 @@
 package com.minkatec.Diary.entities;
 
 public enum Role {
-    ADMIN, USER, GUEST, AUTHENTICATED;
+
+    ADMIN,  WRITER ,USER, GUEST,AUTHENTICATED;
 
     public String roleName() {
         return "ROLE_" + this.toString();
@@ -17,4 +18,3 @@ public enum Role {
     }
 
 }
-
