@@ -34,17 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // 4.3 Como vamos a codificar las claves
     // 5 Tendre que implementar mi gestor personalizado porque hare gestion centralizada
 
-    /*    @Override
-
-    protected void configure(HttpSecurity http) throws Exception {
-    //PARA REGISTER
-            http.csrf().disable().authorizeRequests()
-                    .antMatchers("/api/auth/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated();
-    }*/
-
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
@@ -57,14 +46,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //No SESSIONS
                 .and().addFilter(jwtAuthorizationFilter()); //JSON TOKEN
     }
-    @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(this.authenticationManager());
-    }
-
     @Bean //Encriptador de claves
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
+        return new JwtAuthorizationFilter(this.authenticationManager());
     }
 
 

@@ -14,20 +14,16 @@ public class AuthService {
     @Autowired
     private UserDao userDao;
 
+    public User signup(UserDto userDto) {
 
-
-    public void signup(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
-        //user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setActive(true);
         user.setRegistrationDate( LocalDateTime.now());
-        user.setRoles( new Role[]{Role.ADMIN,Role.WRITER});
+        user.setRoles(new Role[]{Role.WRITER});
 
-        userDao.save(user);
-
-
+        return userDao.save(user);
     }
 }

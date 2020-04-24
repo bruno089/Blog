@@ -2,7 +2,6 @@ package com.minkatec.Diary.data_services;
 
 import com.minkatec.Diary.daos.UserDao;
 import com.minkatec.Diary.entities.Role;
-import com.minkatec.Diary.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.security.core.userdetails.User;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,14 +45,14 @@ public class UserDetailsServiceImpl  implements UserDetailsService {
         }
     }
 
-
-    private org.springframework.security.core.userdetails.User userBuilder(String username, String password, Role[] roles,
-                                                                           boolean active) {
+    // Clase User de Spring
+    // Spring class User
+    private User userBuilder(String username, String password, Role[] roles,boolean active) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.roleName()));
         }
-        return new org.springframework.security.core.userdetails.User(username, password, active, true,
-                true, true, authorities);
+        return  new User(username, password, active,
+                true,true, true, authorities);
     }
 }

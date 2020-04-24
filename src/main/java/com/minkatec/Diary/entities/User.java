@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+    @Column( nullable = false)
+    String name;
     @Column( unique = true, nullable = false)
     String username;
     @Column(unique = true, nullable = false)
@@ -76,5 +78,11 @@ public class User {
         this.roles = roles;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }
