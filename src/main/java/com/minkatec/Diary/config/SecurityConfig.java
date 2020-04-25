@@ -13,47 +13,33 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-// 1 Crear  clase que extiende de WebSecurityConfigurerAdapter
-// 1 Create class, and it extends from WebSecurityConfigurerAdapter
-// 2 Insertar estas anotaciones de abajo
-// 2 Insert annotations below
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) //Seguridad Distribuida //Distributed Security
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    // 3 Inyectamos el gestor de usuarios
-    // 3 Inyect our user manager
-     @Autowired UserDetailsServiceImpl userDetailsServiceImpl;
-    // 4 Configurar estos tres metodos
-    // 4 Config these three methods
-        // 4.1 Como vamos a establecer la config, que tipo de seguridad yo quiero
-        // 4.1 How we use , what kind of security type i want
-    // 4.2 Tenemos que configurar un constructor de autenticacion
-    // 4.2
-    // 4.3 Como vamos a codificar las claves
-    // 5 Tendre que implementar mi gestor personalizado porque hare gestion centralizada
+
+    @Autowired UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
     }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()   //Disable Cross Site Request Forgery disable to Api
                 .httpBasic()    //login with Auth Basic for getting a token
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //No SESSIONS
-                .and().addFilter(jwtAuthorizationFilter()); //JSON TOKEN
-    }
-    @Bean //Encriptador de claves
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+                .and().addFilter(jwtAuthorizationFilter()); //JWT TOKEN
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
         return new JwtAuthorizationFilter(this.authenticationManager());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 

@@ -17,11 +17,11 @@ public class JwtService {
     private static final String USER = "user";
     private static final String NAME = "name";
     private static final String ROLES = "roles";
-    private static final String ISSUER = "es-upm-miw-spring";
+    private static final String ISSUER = "Bruno-Lopezcross";
     private static final int EXPIRES_IN_MILLISECOND = 3600000;
     // Este valor deberia ir en una variable de entorno
     // This value should go in an enviroment variable
-    private static final String SECRET = "clave-secreta-aqui";
+    private static final String SECRET = "aqui-tu-clave-secreta";
 
 
     public String createToken(String user, String name, String[] roles) {
