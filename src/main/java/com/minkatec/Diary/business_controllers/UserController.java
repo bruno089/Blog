@@ -25,15 +25,16 @@ public class UserController {
     @Autowired    UserDao userDao;
 
 
-    public TokenOutputDto signup(UserDto userDto) {
-
+    public TokenOutputDto register(UserDto userDto) {
+        //Todo Userbuilder - and default password
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
         user.setActive(true);
         user.setRegistrationDate( LocalDateTime.now());
-        user.setRoles(new Role[]{Role.WRITER});
+        user.setRoles(new Role[]{Role.AUTHENTICATED});
         User userCreated =  userDao.save(user);
         String[] roles = Arrays.stream(userCreated.getRoles()).map(Role::name).toArray(String[]::new);
         return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
@@ -64,10 +65,6 @@ public class UserController {
         }
         if (claimRoles.contains(Role.WRITER.roleName())
                 && !userRoles.contains(Role.ADMIN.roleName()) && !userRoles.contains(Role.WRITER.roleName())) {
-            return;
-        }
-        if (claimRoles.contains(Role.GUEST.roleName())
-                && userRoles.stream().allMatch(role -> role.equals(Role.GUEST.roleName()))) {
             return;
         }
         throw new ForbiddenException("User name (" + username + ")");

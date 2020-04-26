@@ -32,8 +32,7 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain) throws IOException, ServletException {
-
-       /* String authHeader = req.getHeader(AUTHORIZATION);
+        String authHeader = req.getHeader(AUTHORIZATION);
         if (jwtService.isBearer(authHeader)) {
             List<GrantedAuthority> authorities;
             try {
@@ -48,6 +47,6 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter {
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
-        chain.doFilter(req, res);*/
+        chain.doFilter(req, res);
     }
 }
