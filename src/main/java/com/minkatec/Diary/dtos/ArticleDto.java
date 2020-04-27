@@ -7,5 +7,7 @@ public class ArticleDto {
     String content;
     String summary;
     boolean visible = false;
+    int idDiary;
+
     //String[] tags ;
 }

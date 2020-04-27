@@ -6,14 +6,12 @@ import com.minkatec.Diary.entities.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+
 @Controller
 public class ArticleController {
     @Autowired    ArticleDao articleDao;
-/*
+
     public Article create(ArticleDto articleDto){
-        Article article = new Article();
-        return articleDao.save(article);
-    }*/
-
-
+        return null;
+    }
 }
