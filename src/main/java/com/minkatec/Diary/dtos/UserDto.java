@@ -1,7 +1,9 @@
 package com.minkatec.Diary.dtos;
 
 import com.minkatec.Diary.entities.User;
+import lombok.Data;
 
+@Data
 public class UserDto {
 
     String username;
@@ -10,6 +12,7 @@ public class UserDto {
     String email;
 
     public UserDto(){}
+
     public UserDto(User user) {
         username = user.getUsername();
         password = user.getPassword();
@@ -17,19 +20,5 @@ public class UserDto {
         name = user.getName();
     }
 
-    public String getUsername() {
-        return username;
-    }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
