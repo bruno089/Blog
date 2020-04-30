@@ -9,6 +9,7 @@ import com.minkatec.Diary.entities.User;
 import com.minkatec.Diary.exceptions.ForbiddenException;
 import com.minkatec.Diary.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -23,7 +25,6 @@ public class UserController {
 
     @Autowired    JwtService jwtService;
     @Autowired    UserDao userDao;
-
 
     public TokenOutputDto register(UserDto userDto) {
         //Todo Userbuilder - and default password
@@ -37,8 +38,8 @@ public class UserController {
         user.setRoles(new Role[]{Role.AUTHENTICATED});
         User userCreated =  userDao.save(user);
         String[] roles = Arrays.stream(userCreated.getRoles()).map(Role::name).toArray(String[]::new);
-        return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
 
+        return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
     }
 
     public TokenOutputDto login(String username) {
@@ -70,5 +71,10 @@ public class UserController {
         throw new ForbiddenException("User name (" + username + ")");
     }
 
+    public Optional<org.springframework.security.core.userdetails.User> getCurrenUser(){
 
+        return Optional.of((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+        );
+    }
 }
