@@ -25,8 +25,6 @@ public class BlogResource {
     @PostMapping("/{idBlog}/articles")
     public ResponseEntity createArticle(@PathVariable int idBlog, @RequestBody ArticleDto articleDto){
 
-        blogController.createArticle(idBlog,articleDto);
-
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(blogController.createArticle(idBlog,articleDto));
     }
 }

@@ -31,4 +31,11 @@ public class User {
     Role[] roles;
 
 
+
+
+
+
+
+
+
 }

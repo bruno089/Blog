@@ -27,16 +27,17 @@ public class UserController {
     @Autowired    UserDao userDao;
 
     public TokenOutputDto register(UserDto userDto) {
-        //Todo Userbuilder - and default password
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
-        user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
-        user.setActive(true);
-        user.setRegistrationDate( LocalDateTime.now());
-        user.setRoles(new Role[]{Role.AUTHENTICATED});
-        User userCreated =  userDao.save(user);
+        User user2 = User.builder()
+                .username(userDto.getUsername())
+                .password(new BCryptPasswordEncoder().encode(userDto.getPassword()))
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .active(true)
+                .registrationDate(LocalDateTime.now())
+                .roles(new Role[]{Role.AUTHENTICATED})
+                .build();
+
+        User userCreated =  userDao.save(user2);
         String[] roles = Arrays.stream(userCreated.getRoles()).map(Role::name).toArray(String[]::new);
 
         return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
@@ -71,10 +72,16 @@ public class UserController {
         throw new ForbiddenException("User name (" + username + ")");
     }
 
-    public Optional<org.springframework.security.core.userdetails.User> getCurrenUser(){
+    public String getCurrenUsername(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return Optional.of((org.springframework.security.core.userdetails.User)
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal()
-        );
     }
+
+
+    public User getUser(){
+      return  userDao
+              .findByUsername(this.getCurrenUsername())
+              .orElseThrow(() -> new NotFoundException("User not found: " + this.getCurrenUsername()));
+    }
+
 }

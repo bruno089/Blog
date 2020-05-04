@@ -30,6 +30,18 @@ public class Blog {
     }
 
 
+    public Article getArticleByTitle(String title){
+
+        for (Article article: articles){
+            if( article.title == title ){
+                return article;
+            }
+        }
+
+        return null;
+    }
+
+
 
 
 

@@ -24,13 +24,9 @@ public class UserDetailsServiceImpl  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+
          com.minkatec.Blog.entities.User user = userDao.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("username not found. " + username));
-     //Todo posible manejo para no confirmados?
-     /*         boolean active = user.isActive();
-         if (active == false ){
-             throw  new UsernameNotFoundException("username:" + username + " not confirmed yet.");
-         }*/
 
         return this.userBuilder
                 (user.getUsername(), user.getPassword(), new Role[]{Role.AUTHENTICATED}, user.isActive());

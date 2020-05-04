@@ -31,4 +31,8 @@ public class Article {
     @ManyToMany    @OrderColumn()
     Tag[] tags;
 
+
+
+
+
 }
