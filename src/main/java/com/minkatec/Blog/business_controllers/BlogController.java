@@ -1,7 +1,6 @@
 package com.minkatec.Blog.business_controllers;
 
 import com.minkatec.Blog.daos.BlogDao;
-import com.minkatec.Blog.daos.UserDao;
 import com.minkatec.Blog.dtos.ArticleDto;
 import com.minkatec.Blog.dtos.BlogDto;
 import com.minkatec.Blog.entities.Article;
@@ -12,18 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 public class BlogController {
     @Autowired    BlogDao blogDao;
-    @Autowired    UserDao userDao;
+
     @Autowired    UserController userController;
 
     public BlogDto create(BlogDto blogDto){
 
-        User user = userDao
-                .findByUsername( userController.getCurrenUsername() )
-                .orElseThrow(()-> new NotFoundException("Not found User:" + userController.getCurrenUsername() ));
+        User user =  userController.getCurrentUser();
 
         Blog newBlog = Blog.builder()
                 .title(blogDto.getTitle())
@@ -35,11 +33,10 @@ public class BlogController {
     }
 
     public Article createArticle(int  idBlog, ArticleDto articleDto) {
-        // FindByIdAndUser --- Or username in current user
-        //Todo puedo en usuario devolver un USER directamente y luego hacerle get a la entidad
-            //Todo Then blogDao.findByIdAndUser()
-        Blog blog =  blogDao.findById(idBlog)
+
+        Blog blog = blogDao.findByIdAndUser(idBlog,userController.getCurrentUser())
                 .orElseThrow(()-> new NotFoundException("Blog: " + idBlog +" not found."));
+
         Article newArticle =  Article.builder()
                 .content(articleDto.getContent())
                 .loadDate(LocalDateTime.now())
@@ -53,5 +50,12 @@ public class BlogController {
         blogDao.save(blog);
 
         return blog.getArticleByTitle(articleDto.getTitle());
+    }
+
+    public List<Article> readAllArticles(int idBlog){
+       Blog blog = blogDao
+               .findByIdAndUser(idBlog,this.userController.getCurrentUser())
+               .orElseThrow(()-> new NotFoundException("Blog: " + idBlog +" not found."));
+        return blog.getArticles();
     }
 }

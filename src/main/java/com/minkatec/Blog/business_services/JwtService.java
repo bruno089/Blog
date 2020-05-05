@@ -37,7 +37,9 @@ public class JwtService {
     }
 
     public boolean isBearer(String authorization) {
-        return authorization != null && authorization.startsWith(BEARER) && authorization.split("\\.").length == 3;
+        return  authorization != null &&
+                authorization.startsWith(BEARER) &&
+                authorization.split("\\.").length == 3;
     }
 
     public String user(String authorization) {
@@ -61,4 +63,7 @@ public class JwtService {
     public List<String> roles(String authorization) {
         return Arrays.asList(this.verify(authorization).getClaim(ROLES).asArray(String.class));
     }
+
+
+
 }

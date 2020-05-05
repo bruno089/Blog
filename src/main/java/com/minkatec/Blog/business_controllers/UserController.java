@@ -1,9 +1,12 @@
 package com.minkatec.Blog.business_controllers;
 
 import com.minkatec.Blog.business_services.JwtService;
+import com.minkatec.Blog.business_services.MailService;
+import com.minkatec.Blog.daos.ConfirmationCodeDao;
 import com.minkatec.Blog.daos.UserDao;
 import com.minkatec.Blog.dtos.TokenOutputDto;
 import com.minkatec.Blog.dtos.UserDto;
+import com.minkatec.Blog.entities.ConfirmationCode;
 import com.minkatec.Blog.entities.Role;
 import com.minkatec.Blog.entities.User;
 import com.minkatec.Blog.exceptions.ForbiddenException;
@@ -17,28 +20,38 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
 
-    @Autowired    JwtService jwtService;
     @Autowired    UserDao userDao;
+    @Autowired    MailService mailService;
+    @Autowired    JwtService jwtService;
+    @Autowired    ConfirmationCodeDao confirmationCodeDao;
 
     public TokenOutputDto register(UserDto userDto) {
-        User user2 = User.builder()
+
+        User user = User.builder()
                 .username(userDto.getUsername())
                 .password(new BCryptPasswordEncoder().encode(userDto.getPassword()))
                 .email(userDto.getEmail())
                 .name(userDto.getName())
-                .active(true)
+                .active(false)
                 .registrationDate(LocalDateTime.now())
                 .roles(new Role[]{Role.AUTHENTICATED})
                 .build();
 
-        User userCreated =  userDao.save(user2);
+        User userCreated =  userDao.save(user);
         String[] roles = Arrays.stream(userCreated.getRoles()).map(Role::name).toArray(String[]::new);
+
+        ConfirmationCode confirmationToken = new ConfirmationCode(user);
+        confirmationCodeDao.save(confirmationToken);
+
+        mailService.sendMail(
+                "bruno.lopezcross@gmail.com",
+                "Registration Code",
+                "pone este código: S3CR3T");
 
         return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
     }
@@ -49,6 +62,33 @@ public class UserController {
         String[] roles = Arrays.stream(user.getRoles()).map(Role::name).toArray(String[]::new);
 
         return new TokenOutputDto(jwtService.createToken(user.getUsername(), user.getName(),roles));
+    }
+
+    public void confirmUserAccount(String code){
+        ConfirmationCode confirmationCode = confirmationCodeDao.findByCode(code);
+        if(code != null)
+        {
+            User user = userDao
+                    .findByEmailIdIgnoreCase(confirmationCode.getUser().getEmail())
+                    .orElseThrow(()-> new NotFoundException("Not found user email"));
+            user.setActive(true);
+            userDao.save(user);
+            //"accountVerified"
+        }
+        else
+        {
+          //Error  null code  exception
+        }
+    }
+
+    private String getCurrentUsername(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public User getCurrentUser(){
+      return  userDao
+              .findByUsername(this.getCurrentUsername())
+              .orElseThrow(() -> new NotFoundException("User not found: " + this.getCurrentUsername()));
     }
 
     public UserDto readUser(String username, String claimUsername, List<String> claimRoles) {
@@ -70,18 +110,6 @@ public class UserController {
             return;
         }
         throw new ForbiddenException("User name (" + username + ")");
-    }
-
-    public String getCurrenUsername(){
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-
-    }
-
-
-    public User getUser(){
-      return  userDao
-              .findByUsername(this.getCurrenUsername())
-              .orElseThrow(() -> new NotFoundException("User not found: " + this.getCurrenUsername()));
     }
 
 }

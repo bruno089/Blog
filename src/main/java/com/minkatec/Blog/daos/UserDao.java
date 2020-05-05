@@ -13,4 +13,6 @@ public interface UserDao extends JpaRepository<User,Integer> {
 
     Optional<User> findByUsernameAndActive(String username, boolean active);
 
+    Optional<User> findByEmailIdIgnoreCase(String username);
+
 }

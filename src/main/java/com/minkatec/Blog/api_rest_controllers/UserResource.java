@@ -27,20 +27,23 @@ public class UserResource {
     public TokenOutputDto register(@RequestBody UserDto userDto){
         return userController.register(userDto);
     }
-
     @PreAuthorize("authenticated")
     @PostMapping(value = LOGIN)
     public TokenOutputDto login(@AuthenticationPrincipal User activeUser) {
         return userController.login(activeUser.getUsername());
     }
+    @PostMapping(value = "/confirm")
+    public void confirmUserAccount(@RequestBody() String confirmationCode){
+        userController.confirmUserAccount(confirmationCode);
+    }
 
-
+/*
     @GetMapping(value = USERNAME)
     public UserDto read(@PathVariable String username, @AuthenticationPrincipal User activeUser) {
         return this.userController.readUser(username, SecurityContextHolder.getContext().getAuthentication().getName(),
                 SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-    }
+    }*/
 
 
 

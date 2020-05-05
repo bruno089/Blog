@@ -1,5 +1,4 @@
 package com.minkatec.Blog.entities;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,9 +20,9 @@ public class User {
     int id;
     @Column( nullable = false)
     String name;
-    @Column( unique = true, nullable = false)
+    @Column( unique = true, nullable = false, length = 60)
     String username;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 60)
     String email;
     String password;
     boolean active;
@@ -29,13 +30,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER) @OrderColumn
     Role[] roles;
-
-
-
-
-
-
-
 
 
 }

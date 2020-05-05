@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Data
 @Builder
@@ -14,11 +15,11 @@ import javax.validation.constraints.Max;
 
 public class ArticleDto {
     @NotNull
+    @Min(1)
     String title;
     @NotNull
     String content;
+    String[] tags ;
     @NotNull
     String summary;
-
-    String[] tags ;
 }
