@@ -2,6 +2,7 @@ package com.minkatec.Blog.business_controllers;
 
 import com.minkatec.Blog.business_services.JwtService;
 import com.minkatec.Blog.business_services.MailService;
+import com.minkatec.Blog.business_services.RandomGeneratorService;
 import com.minkatec.Blog.daos.ConfirmationCodeDao;
 import com.minkatec.Blog.daos.UserDao;
 import com.minkatec.Blog.dtos.TokenOutputDto;
@@ -9,9 +10,12 @@ import com.minkatec.Blog.dtos.UserDto;
 import com.minkatec.Blog.entities.ConfirmationCode;
 import com.minkatec.Blog.entities.Role;
 import com.minkatec.Blog.entities.User;
+import com.minkatec.Blog.exceptions.ConfirmationUserException;
 import com.minkatec.Blog.exceptions.ForbiddenException;
 import com.minkatec.Blog.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -43,15 +47,20 @@ public class UserController {
                 .build();
 
         User userCreated =  userDao.save(user);
+
         String[] roles = Arrays.stream(userCreated.getRoles()).map(Role::name).toArray(String[]::new);
+
 
         ConfirmationCode confirmationToken = new ConfirmationCode(user);
         confirmationCodeDao.save(confirmationToken);
 
+
+        String code = RandomGeneratorService.generateRandomString();
+
         mailService.sendMail(
-                "bruno.lopezcross@gmail.com",
+                userDto.getEmail(),
                 "Registration Code",
-                "pone este código: S3CR3T");
+                "Your activation code is: " + code);
 
         return new TokenOutputDto(jwtService.createToken(userCreated.getUsername(), userCreated.getName(),roles));
     }
@@ -64,20 +73,19 @@ public class UserController {
         return new TokenOutputDto(jwtService.createToken(user.getUsername(), user.getName(),roles));
     }
 
+    @PreAuthorize("authenticated")
     public void confirmUserAccount(String code){
         ConfirmationCode confirmationCode = confirmationCodeDao.findByCode(code);
         if(code != null)
         {
             User user = userDao
-                    .findByEmailIdIgnoreCase(confirmationCode.getUser().getEmail())
+                    .findByEmailIgnoreCase(confirmationCode.getUser().getEmail())
                     .orElseThrow(()-> new NotFoundException("Not found user email"));
             user.setActive(true);
             userDao.save(user);
-            //"accountVerified"
-        }
-        else
-        {
-          //Error  null code  exception
+
+        }else{
+          throw new ConfirmationUserException("Code null");
         }
     }
 
