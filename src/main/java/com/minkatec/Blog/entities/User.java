@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,4 +33,12 @@ public class User {
     Role[] roles;
 
 
+
+
+    public String[]  getStringRoles(){
+        Role[]  roles = this.getRoles();
+        String[] stringRoles = Arrays.stream(roles).map(Role::name).toArray(String[]::new);
+        return stringRoles;
+
+    }
 }

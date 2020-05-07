@@ -1,5 +1,6 @@
 package com.minkatec.Blog.entities;
 
+import com.minkatec.Blog.business_services.RandomGeneratorService;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,11 +20,14 @@ public class ConfirmationCode {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
+    private static final int HOURS_EXPIRATION = 24;
+
+    public ConfirmationCode(){}
 
     public  ConfirmationCode(User user){
         this.user = user;
-        this.code = "S3CR3T";
+        this.code = RandomGeneratorService.generateRandomString();
         this.createdDate = LocalDateTime.now();
-        this.expiredDataToken =  LocalDateTime.now().plusHours(1);
+        this.expiredDataToken =  LocalDateTime.now().plusHours(HOURS_EXPIRATION);
     }
 }

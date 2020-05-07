@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.minkatec</groupId>
-	<artifactId>Diary</artifactId>
+	<artifactId>Blog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Diary</name>
+	<name>Blog</name>
 	<description>Project for writing personal articles and keep them safe</description>
 
 	<properties>

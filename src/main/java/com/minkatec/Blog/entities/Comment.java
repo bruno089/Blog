@@ -11,6 +11,4 @@ public class Comment {
     LocalDateTime loadDate;
     @JoinColumn    @ManyToOne
     User user;
-
-
 }

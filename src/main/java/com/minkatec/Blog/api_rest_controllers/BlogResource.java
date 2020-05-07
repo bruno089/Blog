@@ -13,6 +13,8 @@ import javax.validation.Valid;
 @RequestMapping(BlogResource.BLOGS)
 public class BlogResource {
     public static final String BLOGS = "/blogs";
+    public static final String BLOG_ID = "/{idBlog}";
+    public static final String ARTICLES = "/articles";
 
     @Autowired
     BlogController blogController;
@@ -22,9 +24,8 @@ public class BlogResource {
         return blogController.create(blogDto);
     }
 
-    @PostMapping("/{idBlog}/articles")
+    @PostMapping( BLOG_ID + ARTICLES )
     public ResponseEntity createArticle(@PathVariable int idBlog, @RequestBody ArticleDto articleDto){
-
         return ResponseEntity.ok(blogController.createArticle(idBlog,articleDto));
     }
 }

@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.minkatec.Blog.exceptions.JwtException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,9 +20,9 @@ public class JwtService {
     private static final String ROLES = "roles";
     private static final String ISSUER = "Bruno-Lopezcross";
     private static final int EXPIRES_IN_MILLISECOND = 3600000;
-    // Este valor deberia ir en una variable de entorno
-    // This value should go in an enviroment variable
-    private static final String SECRET = "aqui-tu-clave-secreta";
+
+    @Value("${jwt.key}")
+    private String SECRET;
 
 
     public String createToken(String user, String name, String[] roles) {
@@ -37,6 +38,7 @@ public class JwtService {
     }
 
     public boolean isBearer(String authorization) {
+        System.out.println(SECRET);
         return  authorization != null &&
                 authorization.startsWith(BEARER) &&
                 authorization.split("\\.").length == 3;

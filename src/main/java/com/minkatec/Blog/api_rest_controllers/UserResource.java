@@ -16,38 +16,29 @@ import java.util.stream.Collectors;
 @RequestMapping(UserResource.USERS)
 
 public class UserResource {
+
     public static final String USERS = "/users";
     public static final String LOGIN = "/login";
     public static final String REGISTER = "/register";
-    public static final String USERNAME = "/{username}";
+    public static final String CONFIRM = "/confirm";
 
-    @Autowired    UserController userController;
+    @Autowired
+    UserController userController;
 
     @PostMapping(REGISTER)
-    public TokenOutputDto register(@RequestBody UserDto userDto){
-        return userController.register(userDto);
+    public void register(@RequestBody UserDto userDto){
+        userController.register(userDto);
     }
-    @PreAuthorize("authenticated")
-    @PostMapping(value = LOGIN)
-    public TokenOutputDto login(@AuthenticationPrincipal User activeUser) {
-        return userController.login(activeUser.getUsername());
-    }
-    @PostMapping(value = "/confirm")
-    public void confirmUserAccount(@RequestBody() String confirmationCode){
+
+    @GetMapping(CONFIRM)
+    public void confirmUserAccount(@RequestParam() String confirmationCode){
         userController.confirmUserAccount(confirmationCode);
     }
 
-/*
-    @GetMapping(value = USERNAME)
-    public UserDto read(@PathVariable String username, @AuthenticationPrincipal User activeUser) {
-        return this.userController.readUser(username, SecurityContextHolder.getContext().getAuthentication().getName(),
-                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-    }*/
-
-
-
-
-
+    @PreAuthorize("authenticated")
+    @PostMapping(LOGIN)
+    public TokenOutputDto login(@AuthenticationPrincipal User activeUser) {
+        return userController.login(activeUser.getUsername());
+    }
 
 }
