@@ -31,5 +31,5 @@
 
 ### Entities
 Entities.  
-![](https://github.com/bruno089/Blog/docs/documents.png)
+![](https://github.com/bruno089/Blog/blob/develop/docs/jpg/entities-detail.jpg)
    
