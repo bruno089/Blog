@@ -34,7 +34,7 @@ public class UserController {
     @Autowired    ConfirmationCodeDao confirmationCodeDao;
 
     public void register(UserDto userDto) {
-
+        //TODO Existing User Exception
         User user = User.builder()
                 .username(userDto.getUsername())
                 .password(new BCryptPasswordEncoder().encode(userDto.getPassword()))
