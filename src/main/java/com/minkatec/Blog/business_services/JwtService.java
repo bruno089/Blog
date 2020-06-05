@@ -38,7 +38,6 @@ public class JwtService {
     }
 
     public boolean isBearer(String authorization) {
-        System.out.println(SECRET);
         return  authorization != null &&
                 authorization.startsWith(BEARER) &&
                 authorization.split("\\.").length == 3;
