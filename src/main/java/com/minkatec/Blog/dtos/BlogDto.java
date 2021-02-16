@@ -3,17 +3,22 @@ package com.minkatec.Blog.dtos;
 import com.minkatec.Blog.entities.Blog;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlogDto {
-    @NotEmpty
+  //  @NotEmpty
     String title;
+    String description;
+    int id;
+    //TODO Cantidad de Articles , Owner ,
 
-    public BlogDto(Blog diary) {
-        this.title = diary.getTitle();
+    public BlogDto(Blog blog) {
+        this.title = blog.getTitle();
+        this.description = blog.getDescription();
+        this.id = blog.getId();
+
     }
 }

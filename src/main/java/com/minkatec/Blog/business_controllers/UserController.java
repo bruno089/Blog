@@ -9,10 +9,7 @@ import com.minkatec.Blog.dtos.UserDto;
 import com.minkatec.Blog.entities.ConfirmationCode;
 import com.minkatec.Blog.entities.Role;
 import com.minkatec.Blog.entities.User;
-import com.minkatec.Blog.exceptions.ConfirmationUserException;
-import com.minkatec.Blog.exceptions.ConflictException;
-import com.minkatec.Blog.exceptions.ForbiddenException;
-import com.minkatec.Blog.exceptions.NotFoundException;
+import com.minkatec.Blog.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +31,13 @@ public class UserController {
     @Autowired    ConfirmationCodeDao confirmationCodeDao;
 
     public void register(UserDto userDto) {
-        //TODO Existing User Exception
+        if( userDao.findByEmailIgnoreCase(userDto.getEmail()).isPresent() ) {
+            throw  new AlreadyExistException("The email: " + userDto.getEmail() + " Exist in app.");
+            }
+        if( userDao.findByUsernameIgnoreCase(userDto.getUsername()).isPresent() ) {
+            throw  new AlreadyExistException("The username: " + userDto.getUsername() + " Exist in app.");
+            }
+        //TODO Reorganize order, first try to send email, generate code and then save all???
         User user = User.builder()
                 .username(userDto.getUsername())
                 .password(new BCryptPasswordEncoder().encode(userDto.getPassword()))
@@ -42,7 +45,7 @@ public class UserController {
                 .name(userDto.getName())
                 .active(false)
                 .registrationDate(LocalDateTime.now())
-                .roles(new Role[]{Role.AUTHENTICATED})
+                .roles(new Role[]{Role.AUTHENTICATED}) //TODO How to deal with writer role and admin role?
                 .build();
         User createdUser =  userDao.save(user);
 
@@ -53,7 +56,7 @@ public class UserController {
         // return new TokenOutputDto(jwtService.createToken(createdUser.getUsername(), createdUser.getName(),createdUser.getStringRoles()));
     }
 
-    public void confirmUserAccount(String code){
+    public void confirmUserAccount(String code){ //Todo  Should I also request the mail like parameter?
         ConfirmationCode confirmationCode = confirmationCodeDao.findByCode(code);
         if(code == null) {
             throw new ConfirmationUserException("Code confirmation null");
@@ -67,12 +70,12 @@ public class UserController {
                 .orElseThrow(()-> new NotFoundException("Not found user email"));
         user.setActive(true);
         userDao.save(user);
-
-    }
+    }//Los confirm envian mensaje , devuelven algo?
 
     public TokenOutputDto login(String username) {
         User user = userDao.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Unexpected!!. Username not found:" + username));
+                           .orElseThrow(() -> new RuntimeException("Username not found: " + username));
+
         String[] roles = Arrays.stream(user.getRoles()).map(Role::name).toArray(String[]::new);
 
         return new TokenOutputDto(jwtService.createToken(user.getUsername(), user.getName(),roles));

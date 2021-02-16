@@ -29,7 +29,7 @@ public class JwtService {
         return JWT.create()
                 .withIssuer(ISSUER)
                 .withIssuedAt(new Date())
-                .withNotBefore(new Date())
+                .withNotBefore(new Date()) //No se puede usar antes de la fehca establecida
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRES_IN_MILLISECOND))
                 .withClaim(USER, user)
                 .withClaim(NAME, name)
@@ -49,7 +49,7 @@ public class JwtService {
 
     private DecodedJWT verify(String authorization) {
         if (!this.isBearer(authorization)) {
-            throw new JwtException("It is not Berear");
+            throw new JwtException("It is not Bearer");
         }
         try {
             return JWT.require(Algorithm.HMAC256(SECRET))

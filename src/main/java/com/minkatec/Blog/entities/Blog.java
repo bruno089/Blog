@@ -18,8 +18,9 @@ public class Blog {
     int id;
     @Column(length = 100,unique = true)
     String title;
+    @Column(length = 500)
+    String description;
     LocalDateTime registrationDate;
-
     @OneToMany(cascade = CascadeType.ALL)
     List<Article> articles;
     @JoinColumn    @ManyToOne

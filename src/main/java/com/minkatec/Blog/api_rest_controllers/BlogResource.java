@@ -5,10 +5,12 @@ import com.minkatec.Blog.dtos.ArticleDto;
 import com.minkatec.Blog.dtos.BlogDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
+
+@PreAuthorize("hasRole('ADMIN') or hasRole('WRITER') or hasRole('AUTHENTICATED')")
 @RestController
 @RequestMapping(BlogResource.BLOGS)
 public class BlogResource {
@@ -20,9 +22,18 @@ public class BlogResource {
     BlogController blogController;
 
     @PostMapping
-    public BlogDto create(@Valid @RequestBody BlogDto blogDto){
+    public BlogDto create( @RequestBody BlogDto blogDto){
         return blogController.create(blogDto);
     }
+
+    //TODO LIST BY USER
+
+    //TODO GET BY ID BLOG
+
+    //TODO LIST BY USER
+
+    //TODO ELIMINAR  BLOG SOLO EL USUARIO CREADO????
+    //TODO MODIFICAR BLOG SOLO EL USUARIO CREADO????
 
     @PostMapping( BLOG_ID + ARTICLES )
     public ResponseEntity createArticle(@PathVariable int idBlog, @RequestBody ArticleDto articleDto){

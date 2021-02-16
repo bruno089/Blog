@@ -30,7 +30,7 @@ public class UserResource {
         userController.register(userDto);
     }
 
-    @GetMapping(CONFIRM)
+    @GetMapping(CONFIRM) //TODO Averiguar que devuelve este tipo de peticion tradicionalmente
     public void confirmUserAccount(@RequestParam() String confirmationCode){
         userController.confirmUserAccount(confirmationCode);
     }

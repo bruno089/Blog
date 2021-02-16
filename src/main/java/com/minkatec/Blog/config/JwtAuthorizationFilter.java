@@ -36,12 +36,14 @@ public class JwtAuthorizationFilter  extends BasicAuthenticationFilter {
         if (jwtService.isBearer(authHeader)) {
             List<GrantedAuthority> authorities;
             try {
-                authorities = jwtService.roles(authHeader).stream()
-                        .map(role -> new SimpleGrantedAuthority(Role.valueOf(role).roleName())).collect(Collectors.toList());
+                authorities = jwtService.roles(authHeader).stream().map(role -> new SimpleGrantedAuthority(Role.valueOf(role).roleName())).collect(Collectors.toList());
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(jwtService.user(authHeader), null, authorities);
+                        new UsernamePasswordAuthenticationToken(
+                                jwtService.user(authHeader),
+                                null,
+                                authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException e) {
+            } catch (JwtException e) { //Exception not authorized , for JWTService
                 LogManager.getLogger(this.getClass().getName()).debug(">>> FILTER JWT UNAUTHORIZED ..."
                         + req.getHeader(AUTHORIZATION) + e.getMessage());
                 res.sendError(HttpServletResponse.SC_UNAUTHORIZED);

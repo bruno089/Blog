@@ -19,7 +19,6 @@ import java.util.List;
 @Transactional
 @Qualifier("minkatec")
 public class UserDetailsServiceImpl  implements UserDetailsService {
-    public static final String TEST_PASSWORD = "123456";
     @Autowired UserDao userDao;
 
     @Override
